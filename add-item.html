@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adicionar Items - Sistema de Biblioteca</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .item-form {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .preview-image {
+            max-width: 200px;
+            margin-top: 10px;
+        }
+        .items-list {
+            margin-top: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .api-import {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+    </style>
+<body>
+    <nav class="navbar">
+        ...existing code...
+    </nav>
+    <div class="layout">
+        <aside class="sidebar">
+            <a href="index.html">Biblioteca</a>
+            <a href="add-item.html">Adicionar Items</a>
+            <a href="add-collection.html">Adicionar Coleccion</a>
+            <a href="publicar.html">Publicar</a>
+            <a href="control-panel.html">Panel de control</a>
+            <a href="configuraciones.html">Configuraciones</a>
+            <a href="soporte.html">Soporte</a>
+            <a href="#">Salir</a>
+        </aside>
+        <main>
+            <div class="add-item-container">
+                <h1>Adicionar Items</h1>
+                <form id="addItemForm" class="item-form">
+                    <div class="form-group">
+                        <label for="itemType">Tipo de Item</label>
+                        <select id="itemType" required>
+                            <option value="book">Libro</option>
+                            <option value="character">Personaje</option>
+                            <option value="spell">Hechizo</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="itemName">Nombre</label>
+                        <input type="text" id="itemName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="itemDescription">Descripción</label>
+                        <textarea id="itemDescription" rows="4"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="itemImage">Imagen</label>
+                        <input type="file" id="itemImage" accept="image/*">
+                        <div id="imagePreview" class="image-preview"></div>
+                    </div>
+                    <button type="submit" class="btn-submit">Agregar Item</button>
+                </form>
+                <div class="items-list">
+                    <h2>Items Agregados</h2>
+                    <div id="itemsList"></div>
+                </div>
+            </div>
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    const form = document.getElementById('addItemForm');
+                    const imageInput = document.getElementById('itemImage');
+                    const imagePreview = document.getElementById('imagePreview');
+                    const itemsList = document.getElementById('itemsList');
+                    let items = [];
+
+                    imageInput.addEventListener('change', (e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                            const reader = new FileReader();
+                            reader.onload = (e) => {
+                                imagePreview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                    });
+
+                    form.addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        const newItem = {
+                            id: Date.now(),
+                            type: document.getElementById('itemType').value,
+                            name: document.getElementById('itemName').value,
+                            description: document.getElementById('itemDescription').value,
+                            image: imagePreview.querySelector('img')?.src || null
+                        };
+                        
+                        items.push(newItem);
+                        updateItemsList();
+                        form.reset();
+                        imagePreview.innerHTML = '';
+                    });
+
+                    function updateItemsList() {
+                        itemsList.innerHTML = items.map(item => `
+                            <div class="item-card">
+                                <h3>${item.name}</h3>
+                                <p>Tipo: ${item.type}</p>
+                                ${item.image ? `<img src="${item.image}" alt="${item.name}">` : ''}
+                                <p>${item.description}</p>
+                                <button onclick="deleteItem(${item.id})" class="btn-delete">Eliminar</button>
+                            </div>
+                        `).join('');
+                    }
+
+                    window.deleteItem = (id) => {
+                        items = items.filter(item => item.id !== id);
+                        updateItemsList();
+                    };
+                });
+            </script>
+        </main>
+    </div>
+</body>
+</html>

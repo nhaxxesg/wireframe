@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Control - Sistema de Biblioteca</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <a href="index.html"><img src="https://via.placeholder.com/40x40" alt="Logo"></a>
+        </div>
+        <div class="nav-links">
+            <a href="collection.html" class="btn-collection">Colecciones</a>
+            <a href="index.html" class="btn-back">Volver</a>
+        </div>
+    </nav>
+    <div class="layout">
+        <aside class="sidebar">
+            <a href="index.html">Biblioteca</a>
+            <a href="add-item.html">Adicionar Items</a>
+            <a href="add-collection.html">Adicionar Coleccion</a>
+            <a href="publicar.html">Publicar</a>
+            <a href="control-panel.html">Panel de control</a>
+            <a href="#">Configuraciones</a>
+            <a href="#">Soporte</a>
+            <a href="#">Salir</a>
+        </aside>
+        <main>
+            <div class="control-panel">
+                <h2>Panel de Control</h2>
+                <select class="collection-select">
+                    <option>Seleccionar Colección</option>
+                    <option>Colección Harry Potter</option>
+                </select>
+                <div class="stats">
+                    <div class="stat-box">
+                        <h3>Total de Items Exclusivos</h3>
+                        <div class="stat-number">1</div>
+                    </div>
+                    <div class="stat-box">
+                        <h3>Total de Copias</h3>
+                        <div class="stat-number">1</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

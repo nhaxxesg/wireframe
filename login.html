@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - Sistema de Biblioteca</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <a href="index.html"><img src="https://via.placeholder.com/40x40" alt="Logo"></a>
+        </div>
+        <div class="nav-links">
+            <a href="index.html" class="btn-back">Volver</a>
+        </div>
+    </nav>
+    <div class="layout">
+        <aside class="sidebar">
+            <a href="index.html">Biblioteca</a>
+            <a href="add-item.html">Adicionar Items</a>
+            <a href="add-collection.html">Adicionar Coleccion</a>
+            <a href="publicar.html">Publicar</a>
+            <a href="control-panel.html">Panel de control</a>
+            <a href="#">Configuraciones</a>
+            <a href="#">Soporte</a>
+            <a href="#">Salir</a>
+        </aside>
+        <main>
+            <div class="login-container">
+                <h2>Iniciar Sesión</h2>
+                <form class="login-form">
+                    <input type="email" placeholder="E-mail" required>
+                    <input type="password" placeholder="Contraseña" required>
+                    <div class="remember">
+                        <input type="checkbox" id="remember">
+                        <label for="remember">Recuérdame</label>
+                    </div>
+                    <button type="submit" class="btn-submit">Iniciar Sesión</button>
+                    <p class="register-link">No tienes cuenta? <a href="#register">Regístrate</a></p>
+                </form>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

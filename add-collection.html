@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adicionar Colección - Sistema de Biblioteca</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        ...existing code...
+    </nav>
+    <div class="layout">
+        <aside class="sidebar">
+            <a href="index.html">Biblioteca</a>
+            <a href="add-item.html">Adicionar Items</a>
+            <a href="add-collection.html">Adicionar Coleccion</a>
+            <a href="publicar.html">Publicar</a>
+            <a href="control-panel.html">Panel de control</a>
+            <a href="configuraciones.html">Configuraciones</a>
+            <a href="soporte.html">Soporte</a>
+            <a href="#">Salir</a>
+        </aside>
+        <main>
+            <div class="add-collection-container">
+                <h1>Adicionar Colección</h1>
+                <form id="addCollectionForm" class="collection-form">
+                    <div class="form-group">
+                        <label for="collectionName">Nombre de la Colección</label>
+                        <input type="text" id="collectionName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="collectionDescription">Descripción</label>
+                        <textarea id="collectionDescription" rows="4"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="collectionCover">Imagen de Portada</label>
+                        <input type="file" id="collectionCover" accept="image/*">
+                        <div id="coverPreview" class="image-preview"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Agregar Items a la Colección</label>
+                        <div class="api-items">
+                            <select id="apiLanguage">
+                                <option value="es" selected>Español</option>
+                                <option value="en">English</option>
+                                <option value="fr">Français</option>
+                            </select>
+                            <button type="button" id="fetchBooks" class="btn-fetch">Buscar Libros</button>
+                            <button type="button" id="fetchCharacters" class="btn-fetch">Buscar Personajes</button>
+                            <button type="button" id="fetchSpells" class="btn-fetch">Buscar Hechizos</button>
+                        </div>
+                        <div id="apiResults" class="api-results"></div>
+                        <div id="selectedItems" class="selected-items">
+                            <h3>Items Seleccionados</h3>
+                            <div id="selectedItemsList"></div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-submit">Crear Colección</button>
+                </form>
+            </div>
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    const form = document.getElementById('addCollectionForm');
+                    const coverInput = document.getElementById('collectionCover');
+                    const coverPreview = document.getElementById('coverPreview');
+                    const apiResults = document.getElementById('apiResults');
+                    const selectedItemsList = document.getElementById('selectedItemsList');
+                    let selectedItems = [];
+
+                    coverInput.addEventListener('change', (e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                            const reader = new FileReader();
+                            reader.onload = (e) => {
+                                coverPreview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                    });
+
+                    async function fetchApiItems(category) {
+                        const lang = document.getElementById('apiLanguage').value;
+                        try {
+                            const response = await fetch(`https://potterapi-fedeperin.vercel.app/${lang}/${category}`);
+                            const data = await response.json();
+                            displayApiResults(data);
+                        } catch (error) {
+                            console.error('Error:', error);
+                            apiResults.innerHTML = '<p class="error">Error al cargar los datos</p>';
+                        }
+                    }
+
+                    function displayApiResults(items) {
+                        apiResults.innerHTML = items.map(item => `
+                            <div class="api-item">
+                                <h4>${item.name || item.title || item.spell}</h4>
+                                ${item.image ? `<img src="${item.image}" alt="${item.name || item.title || item.spell}">` : ''}
+                                <button type="button" onclick="addToCollection(${JSON.stringify(item)})" class="btn-add">Agregar</button>
+                            </div>
+                        `).join('');
+                    }
+
+                    window.addToCollection = (item) => {
+                        if (!selectedItems.find(i => i.id === item.id)) {
+                            selectedItems.push(item);
+                            updateSelectedItems();
+                        }
+                    };
+
+                    function updateSelectedItems() {
+                        selectedItemsList.innerHTML = selectedItems.map(item => `
+                            <div class="selected-item">
+                                <span>${item.name || item.title || item.spell}</span>
+                                <button onclick="removeFromCollection(${item.id})" class="btn-remove">Eliminar</button>
+                            </div>
+                        `).join('');
+                    }
+
+                    window.removeFromCollection = (id) => {
+                        selectedItems = selectedItems.filter(item => item.id !== id);
+                        updateSelectedItems();
+                    };
+
+                    document.getElementById('fetchBooks').addEventListener('click', () => fetchApiItems('books'));
+                    document.getElementById('fetchCharacters').addEventListener('click', () => fetchApiItems('characters'));
+                    document.getElementById('fetchSpells').addEventListener('click', () => fetchApiItems('spells'));
+
+                    form.addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        const newCollection = {
+                            id: Date.now(),
+                            name: document.getElementById('collectionName').value,
+                            description: document.getElementById('collectionDescription').value,
+                            cover: coverPreview.querySelector('img')?.src || null,
+                            items: selectedItems
+                        };
+                        
+                        // Aquí podrías guardar la colección en localStorage o enviarla a un servidor
+                        console.log('Nueva colección:', newCollection);
+                        alert('Colección creada con éxito!');
+                        form.reset();
+                        coverPreview.innerHTML = '';
+                        selectedItems = [];
+                        updateSelectedItems();
+                    });
+                });
+            </script>
+        </main>
+    </div>
+</body>
+</html>
